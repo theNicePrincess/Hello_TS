@@ -37,7 +37,7 @@ let readonlyUserList: readonly User[] = [
 // readonlyUserList.push({ id: 4, name: '赵六' }); // 错误：无法在只读数组上使用 push 方法
 // readonlyUserList[0] = { id: 4, name: '赵六' }; // 错误：无法修改只读数组的元素
 // 但是可以修改只读数组中对象的属性
-readonlyUserList[0].name = '赵六'; // 允许：可以修改只读数组中对象的属性
+// readonlyUserList[0].name = '赵六'; // 允许：可以修改只读数组中对象的属性
 
 //4、元组类型：元素类型和数量都固定，元组尽量“不越界”，固定长度和类型才是元组的核心价值
 //元组类型：第一个元素是string，第二个元素是number
@@ -105,3 +105,18 @@ let response : UserResponse = {
     gender: '男'
   }
 }
+
+function count(a: number, b: number): number{
+  return a + b;
+}
+console.log(count(1, 2));
+
+//any类型
+let anyValue: any;  // any类型：允许赋值任何类型的值，关闭类型检查
+anyValue = 123; // 允许
+anyValue = true; // 允许
+anyValue = 'Hello'; // 允许
+
+let x:boolean = anyValue; // any 可以赋值给任意类型
+console.log(x, typeof x); // 输出：Hello
+
