@@ -120,3 +120,135 @@ anyValue = 'Hello'; // 允许
 let x:boolean = anyValue; // any 可以赋值给任意类型
 console.log(x, typeof x); // 输出：Hello
 
+let obj: {name: string, age?: number} = {name: '张三'}; // age是可选属性，可以不写
+
+
+//enum枚举，数字枚举是一组命名的数字常量，默认从0开始递增并且反向映射
+enum Direction {
+  Up,
+  Down,
+  Left,
+  Right
+}
+console.log(Direction)
+function move(data: Direction) {
+  if (data === Direction.Up){
+    console.log('向上移动');
+  } else if (data === Direction.Down){
+    console.log('向下移动');
+  } else if (data === Direction.Left){
+    console.log('向左移动');
+  } else if (data === Direction.Right){
+    console.log('向右移动');
+  } else {
+    console.log('未知方向');
+  } 
+}
+
+move(Direction.Up); // 输出：向上移动
+
+// 一种特殊的情况
+type LocalFu = () => void; // 定义一个函数类型，表示一个没有参数且没有返回值的函数
+let localFu: LocalFu = () => {
+  return 666
+}
+console.log(localFu()); // 输出：666
+
+// 如果在定义函数的时候顺手定义类型就不会出现特殊情况
+// let nomalFu = ():void => {
+//   return 666
+// }
+
+//复习类相关的知识
+class Person {
+  name: string;
+  age: number;
+  constructor(name: string, age:number){
+    this.name = name;
+    this.age = age;
+  }
+  speak(){
+    console.log(`我叫${this.name}，今年${this.age}岁了！`);
+  }
+}
+
+let person = new Person('张三', 30);
+person.speak(); // 输出：我叫张三，今年30岁了！
+
+//类的继承
+class Student extends Person {
+  grade: number;
+  constructor(name: string, age: number, grade: number){
+    super(name, age); // 调用父类的构造函数
+    this.grade = grade;
+  }
+  override speak(): void {
+    console.log(`我叫${this.name}，今年${this.age}岁了！我在读${this.grade}年级！`);
+  }
+  study(){
+    console.log(`我在学习，成绩是${this.grade}分！`);
+  }
+}
+
+let student = new Student('李四', 20, 90);
+student.speak();
+student.study();
+
+// 简写方式
+class Teacher{
+  constructor(public name: string, public age: number, public subject: string){} // 父类简写方式
+  teach(){
+    console.log(`我叫${this.name}，今年${this.age}岁了！我教${this.subject}！`);
+  }
+}
+
+class MathTeacher extends Teacher {
+  constructor(name: string, age: number){
+    super(name, age, '数学'); // 固定科目为数学，子类简写方式
+  }
+  override teach(): void {
+    console.log(`我叫${this.name}，今年${this.age}岁了！我教数学！`);
+  }
+}
+
+let math = new MathTeacher('王五', 40);
+console.log(math.subject)
+
+// 抽象类
+abstract class Package{
+  // 构造方法
+  constructor(public weight: number){}
+  // 抽象方法：抽象类：抽象类是不能直接实例化的类，它通常用作其他类的基类。
+  // 抽象方法：抽象方法是没有方法体的声明，必须由[非抽象子类]实现。
+  abstract calculate(): number;
+  // 具体方法
+  printPackage(){
+    console.log(`包裹重量是${this.weight}kg, 费用是${this.calculate()}元！`);
+  }
+}
+class StandardPackage extends Package {
+  constructor(weight: number, public pricePerKg: number){
+    super(weight);
+  }
+  calculate(): number {
+    return this.weight * this.pricePerKg;
+  }
+}
+
+let s1 = new StandardPackage(10, 5); // 错误：无法创建抽象类的实例
+s1.printPackage(); // 输出：包裹重量是10kg, 费用是50元！
+
+class ExpressPackage extends Package {
+  constructor(weight: number, public pricePerKg: number, public expressFee: number){
+    super(weight);
+  }
+  calculate(): number {
+    if (this.weight > 5){
+      return 5 * this.pricePerKg + (this.weight  - 5)*this.expressFee;
+    } else {
+      return this.weight * this.pricePerKg;
+    }
+  }
+}
+let e1 = new ExpressPackage(13, 10, 15);
+e1.printPackage(); 
