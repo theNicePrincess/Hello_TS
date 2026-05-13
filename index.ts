@@ -252,3 +252,134 @@ class ExpressPackage extends Package {
 }
 let e1 = new ExpressPackage(13, 10, 15);
 e1.printPackage(); 
+
+// 接口 interface，是一种定义结构的方式，主要用来定义对象的类型，接口也可以被类实现（implements）来约束类的结构
+// interface只能定义格式，不能包含任何实现
+interface PersonInterface {
+  name: string;
+  age: number;
+  speak(n: number):void;
+}
+
+class PersonInt implements PersonInterface {
+  constructor(public name: string, public age: number){}
+  speak(n: number): void {
+    console.log(`我叫${this.name}，今年${this.age}岁了！我说了${n}句话！`);
+  }
+}
+
+let personInt = new PersonInt('赵六', 35);
+personInt.speak(5); // 输出：我叫赵六，今年35岁了！我说了5句话！
+
+// type和interface都可以定义对象类型
+type NewPersonType = {
+  name: string;
+  age: number;
+  gender?: string;
+}
+
+let npt1: NewPersonType = {
+  name: '钱七',
+  age: 28
+}
+
+interface NewPersonInterface {
+  name: string;
+  age: number;
+  gender?: string;
+}
+let npi1: NewPersonInterface = {
+  name: '孙八',
+  age: 32,
+  gender: '男'
+}
+
+/**
+ * interface和抽象类的区别
+ * 相同点：都用于定义一个类的格式，都可以包含抽象方法（接口中的方法默认是抽象的），都可以被类实现（implements）来约束类的结构
+ * 不同点：
+ * 1、interface：只能描述结构，不能有任何实现代码，一个类可以实现多个接口；
+ * 2、抽象类：既可以包含抽象方法，也可以包含具体方法，抽象类可以有构造函数，一个类只能继承一个抽象类。
+*/
+
+// 泛型：泛型是一种在定义函数、接口或类时使用的类型参数，可以在使用时指定具体的类型，提供更强的类型安全和代码复用性
+// 定义一个泛型函数，T是类型参数，可以在调用时指定具体的类型
+function logData<T>(data: T){
+  console.log(data)
+}
+logData<string>('hello');
+logData<number>(123);
+
+// 可以用多个泛型
+function logMultipleData<T, U>(data1: T, data2: U): T | U{
+  return Math.random() > 0.5 ? data1 : data2; // 随机返回data1或data2
+}
+console.log(logMultipleData<string, number>('hello', 123))
+console.log(logMultipleData<boolean, string>(true, 'world'))
+
+// 泛型接口
+interface ApiResponse<T> {
+  code: number;
+  message: string;
+  data: T;
+}
+
+// 使用泛型接口时指定具体的类型
+interface User{
+  id: number;
+  name: string;
+}
+let response1: ApiResponse<User> = {
+  code: 200,
+  message: '成功',
+  data: {
+    id: 1,
+    name: '张三'
+  }
+}
+
+// 泛型类
+class Box<T>{
+  constructor(public name: string, public age: number, public content: T){};
+  public getContent(){
+    console.log(`盒子名字${this.name}，年龄${this.age}，内容${this.content}`);
+  }
+}
+
+let box1 = new Box<string>('礼物盒', 1, '玩具');
+box1.getContent(); // 输出：盒子名字礼物盒，年龄1，内容玩具
+
+// 泛型约束：限制泛型参数必须满足某些条件
+interface Lengthwise {
+  length: number;
+}
+function logLength<T extends Lengthwise>(data: T): T{
+  console.log(`长度是${data.length}`);
+  return data;
+}
+logLength('hello'); // 输出：长度是5
+logLength([1, 2, 3]); // 输出：长度是3
+// logLength(123); // 错误：类型 'number' 不满足约束 'Lengthwise'，因为 number 类型没有 length 属性
+
+// interface+泛型约束 vs 普通type/interface
+interface Person3 {
+  name: string;
+}
+
+// T 必须满足 Person 结构
+function showName<T extends Person3>(p: T) {
+  return p;
+}
+type Person2 = {
+  name: string
+}
+function showName2(p: Person2) {
+  return p;
+}
+
+const userTest = { name: "abc", age: 18 }
+
+const a = showName(userTest)    // a 的类型：{ name: string; age: number }
+const b = showName2(userTest)   // b 的类型：Person （看不到 age）
+// a.age; // 允许访问 age 属性
+// b.age; // 错误：属性 'age' 在类型 'Person' 上不存在
